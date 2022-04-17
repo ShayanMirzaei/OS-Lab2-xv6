@@ -102,6 +102,9 @@ found:
   sp -= sizeof *p->tf;
   p->tf = (struct trapframe*)sp;
 
+  // Set up syscalls counter
+  memset(p->syscalls, 0, sizeof *p->syscalls);
+
   // Set up new context to start executing at forkret,
   // which returns to trapret.
   sp -= 4;

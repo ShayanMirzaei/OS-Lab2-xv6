@@ -113,3 +113,18 @@ sys_find_next_prime_number(void)
     }
 }
 
+int
+sys_get_call_count(void) {
+
+    int syscall_number;
+
+    if(argint(0, &syscall_number) < 0)
+        return -1;
+
+    if(syscall_number < 1 || syscall_number > 32)
+        return -1;
+
+    return myproc()->syscalls[syscall_number];
+
+}
+
