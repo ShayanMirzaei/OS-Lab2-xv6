@@ -89,3 +89,27 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+int
+sys_find_next_prime_number(void)
+{
+    int n;
+
+    if(argint(0, &n) < 0)
+        return -1;
+
+    int prime;
+    while (1) {
+        n++;
+        prime = 1;
+        for (int i = 2; i*i < n; i++) {
+            if (n % i == 0) {
+                prime = 0;
+                break;
+            }
+        }
+        if (prime)
+            return n;
+    }
+}
+
