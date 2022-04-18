@@ -93,11 +93,7 @@ sys_uptime(void)
 int
 sys_find_next_prime_number(void)
 {
-    int n;
-
-    if(argint(0, &n) < 0)
-        return -1;
-
+    int n = myproc()->tf->ebx;
     int prime;
     while (1) {
         n++;
@@ -126,5 +122,28 @@ sys_get_call_count(void) {
 
     return myproc()->syscalls[syscall_number];
 
+}
+
+int
+sys_get_most_caller(void) {
+    int syscall_number;
+
+    if(argint(0, &syscall_number) < 0)
+        return -1;
+
+    if(syscall_number < 1 || syscall_number > 32)
+        return -1;
+
+    return get_most_caller_proc(syscall_number);
+}
+
+int
+sys_wait_for_process(void) {
+    int pid;
+
+    if(argint(0, &pid) < 0)
+        return -1;
+
+    return wait_for_proc(pid);
 }
 

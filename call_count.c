@@ -17,10 +17,10 @@ main(int argc, char *argv[])
             break;
         wait();
     }
-    fork_count = get_call_count(SYS_fork);
-    write_count = get_call_count(SYS_write);
     pid = getpid();
+    fork_count = get_call_count(SYS_fork);
     printf(0, "pid: %d, fork: %d \n", pid, fork_count);
+    write_count = get_call_count(SYS_write);
     printf(0, "pid: %d, write: %d \n", pid, write_count);
     exit();
 }

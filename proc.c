@@ -103,7 +103,9 @@ found:
   p->tf = (struct trapframe*)sp;
 
   // Set up syscalls counter
-  memset(p->syscalls, 0, sizeof *p->syscalls);
+  memset(p->syscalls, 0, sizeof (int) * 32);
+
+  p->waiting_pid = -1;
 
   // Set up new context to start executing at forkret,
   // which returns to trapret.
@@ -298,6 +300,7 @@ wait(void)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
+        memset(p->syscalls, 0, sizeof(int) * 32);
         release(&ptable.lock);
         return pid;
       }
@@ -534,4 +537,47 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+int get_most_caller_proc(int syscall_number) {
+    int i, most_caller_pid = -1;
+    int max = -1;
+    acquire(&ptable.lock);
+    for (i = 0; i < NPROC; i++) {
+        if (ptable.proc[i].syscalls[syscall_number] > max) {
+            max = ptable.proc[i].syscalls[syscall_number];
+            most_caller_pid = ptable.proc[i].pid;
+        }
+    }
+    release(&ptable.lock);
+    return most_caller_pid;
+}
+
+int wait_for_proc(int pid) {
+    struct proc *p;
+    int found = 0;
+    struct proc *curproc = myproc();
+
+    acquire(&ptable.lock);
+    for(;;){
+        // Scan through table looking for pid.
+        for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+            if(p->pid == pid) {
+                found = 1;
+                if (p->state == ZOMBIE) {
+                    release(&ptable.lock);
+                    return 0;
+                }
+                break;
+            }
+        }
+
+        if(!found || curproc->killed){
+            release(&ptable.lock);
+            return -1;
+        }
+
+        // Wait for children to exit.  (See wakeup1 call in proc_exit.)
+        sleep(p->parent, &ptable.lock);  //DOC: wait-sleep
+    }
 }

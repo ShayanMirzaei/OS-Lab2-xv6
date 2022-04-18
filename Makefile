@@ -183,6 +183,9 @@ UPROGS=\
 	_zombie\
 	_prime\
 	_call_count\
+	_most_caller\
+	_wait_for_other\
+	_pid \
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -252,7 +255,7 @@ qemu-nox-gdb: fs.img xv6.img .gdbinit
 EXTRA=\
 	mkfs.c ulib.c user.h cat.c echo.c forktest.c grep.c kill.c\
 	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c\
-	printf.c umalloc.c prime.c call_count.c\
+	printf.c umalloc.c prime.c call_count.c most_caller.c wait_for_ther.c pid.c\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 

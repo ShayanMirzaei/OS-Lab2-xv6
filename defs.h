@@ -120,6 +120,8 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
+int             get_most_caller_proc(int syscall_number);
+int             wait_for_proc(int pid);
 
 // swtch.S
 void            swtch(struct context**, struct context*);
